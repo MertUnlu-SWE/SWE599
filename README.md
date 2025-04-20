@@ -15,7 +15,7 @@ Evaluate the generated videos using metrics such as:
 - FID (Fréchet Inception Distance)
 
 ## Tools & Technologies
-- DeepFaceLab (for face-swapping and model training)
+- SimSwap (for face-swapping and model training)
 - Python
 
 ## Weekly Work Plan
@@ -25,7 +25,7 @@ Evaluate the generated videos using metrics such as:
 | 1    | Submit timetable                                                     | 16.03.2025   |
 | 2    | Conduct literature review on post-2023 deepfake methods              | 24.03.2025   |
 | 3    | Identify and select a suitable GAN-based deepfake method            | 31.03.2025   |
-| 4    | Set up the GAN model (e.g., DeepFaceLab)                             | 07.04.2025   |
+| 4    | Set up the GAN model (SimSwap)                             | 07.04.2025   |
 | 5    | Train and test the model with sample videos                          | 14.04.2025   |
 | 6    | Submit progress report (system description, design, initial results)| 20.04.2025   |
 | 7    | Generate realistic fake videos and evaluate performance (SSIM, etc.)| 28.04.2025   |
