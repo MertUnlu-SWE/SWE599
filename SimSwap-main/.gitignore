@@ -141,4 +141,4 @@ checkpoints/
 *.onnx
 wandb/
 temp_results/
-output/*.*
+#output/*.*
