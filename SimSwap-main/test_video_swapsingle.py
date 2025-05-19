@@ -108,6 +108,7 @@ if __name__ == '__main__':
         frame_width = int(video_capture.get(cv2.CAP_PROP_FRAME_WIDTH))
         frame_height = int(video_capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
         total_frames = int(video_capture.get(cv2.CAP_PROP_FRAME_COUNT))
+        original_fps = video_capture.get(cv2.CAP_PROP_FPS)
         video_capture.release()
         # Frame sayacı ve yüz algılama sayacı (global değişken)
         global_frame_counter = 0
@@ -154,7 +155,8 @@ if __name__ == '__main__':
         "Detected Faces",
         "Face Detection Rate (%)",
         "Processing Time (s)",
-        "FPS",
+        "Original FPS",
+        "Processing FPS",
         "Output Size (MB)",
         "GPU",
         "CPU",
@@ -180,6 +182,7 @@ if __name__ == '__main__':
             str(global_face_counter),
             f"{round(global_face_counter/global_frame_counter*100, 2)}",
             f"{total_time}",
+            f"{original_fps:.2f}",
             f"{fps}",
             f"{output_size_mb}",
             f'"{gpu_name}"',
@@ -200,11 +203,17 @@ if __name__ == '__main__':
     print(f"LPIPS: {metrics['lpips']:.4f} (closer to 0 is better)")
     print(f"Face Recognition Accuracy: {metrics['face_recognition_accuracy']:.4f} (closer to 1 is better)")
     print(f"Processing Time: {total_time:.2f} seconds")
-    print(f"FPS: {fps:.2f}")
+    print(f"Original Video FPS: {original_fps:.2f}")
+    print(f"Processing FPS: {fps:.2f} (frames processed per second)")
     print("===================\n")
 
     # Create visualizations
     os.makedirs("logs/visualizations", exist_ok=True)
+    
+    # Get source and target names for file naming
+    source_name = os.path.splitext(os.path.basename(opt.pic_a_path))[0]
+    target_name = os.path.splitext(os.path.basename(opt.video_path))[0]
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     
     # Read the CSV file
     df = pd.read_csv(log_path)
@@ -215,10 +224,10 @@ if __name__ == '__main__':
     values = [metrics['ssim'], metrics['psnr'], metrics['lpips'], metrics['face_recognition_accuracy']]
     
     plt.bar(quality_metrics, values)
-    plt.title('Quality Metrics Comparison')
+    plt.title(f'Quality Metrics - {source_name} to {target_name}')
     plt.xticks(rotation=45)
     plt.tight_layout()
-    plt.savefig(f"logs/visualizations/{datetime.now().strftime('%Y%m%d_%H%M%S')}_quality_metrics.png")
+    plt.savefig(f"logs/visualizations/{source_name}_to_{target_name}_{timestamp}_quality_metrics.png")
     plt.close()
 
     # Create a performance metrics plot
@@ -227,20 +236,20 @@ if __name__ == '__main__':
     values = [total_time, fps, round(global_face_counter/global_frame_counter*100, 2)]
     
     plt.bar(performance_metrics, values)
-    plt.title('Performance Metrics')
+    plt.title(f'Performance Metrics - {source_name} to {target_name}')
     plt.xticks(rotation=45)
     plt.tight_layout()
-    plt.savefig(f"logs/visualizations/{datetime.now().strftime('%Y%m%d_%H%M%S')}_performance_metrics.png")
+    plt.savefig(f"logs/visualizations/{source_name}_to_{target_name}_{timestamp}_performance_metrics.png")
     plt.close()
 
     # Create a correlation heatmap
     plt.figure(figsize=(10, 8))
     numeric_columns = ['SSIM (0-1)', 'PSNR (dB)', 'LPIPS (0-1)', 'Face Recognition Accuracy (0-1)', 
-                      'Processing Time (s)', 'FPS', 'Face Detection Rate (%)']
+                      'Processing Time (s)', 'Original FPS', 'Processing FPS', 'Face Detection Rate (%)']
     correlation_matrix = df[numeric_columns].corr()
     sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0)
-    plt.title('Metrics Correlation Heatmap')
+    plt.title(f'Metrics Correlation Heatmap - {source_name} to {target_name}')
     plt.tight_layout()
-    plt.savefig(f"logs/visualizations/{datetime.now().strftime('%Y%m%d_%H%M%S')}_correlation_heatmap.png")
+    plt.savefig(f"logs/visualizations/{source_name}_to_{target_name}_{timestamp}_correlation_heatmap.png")
     plt.close()
 
